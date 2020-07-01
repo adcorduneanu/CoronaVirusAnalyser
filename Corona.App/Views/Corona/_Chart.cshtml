@@ -1,0 +1,32 @@
+﻿@model Corona.App.Models.LocalityViewModel
+@using System.Linq;
+
+<canvas id="chart"></canvas>
+<script async>
+    jQuery(() => {
+        const chartNode = document.getElementById('chart').getContext('2d');
+        const chart = new Chart(chartNode, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.DateValues.Select(x => x.DateTime.ToShortDateString()).ToArray())),
+                datasets: [
+                    {
+                        label: '',
+                        backgroundColor: getRandomRgb(),
+                        borderColor: getRandomRgb(),
+                        data: @Html.Raw(Json.Serialize(Model.DateValues.Select(x => x.Difference).ToArray()))
+                }
+                ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    });
+</script>

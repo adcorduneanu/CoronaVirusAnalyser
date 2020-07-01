@@ -1,0 +1,34 @@
+﻿@model CountryViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+
+    var countries = new SelectList(Model.Countries.Select(x => x.Name));
+    var localities = new SelectList(Model.Countries.FirstOrDefault().Localities);
+
+    var locality = string.Empty;
+    var country = string.Empty;
+}
+
+<form asp-action="LocalityData"
+      asp-controller="Corona"
+      data-ajax="true"
+      data-ajax-method="post"
+      data-ajax-mode="replace"
+      data-ajax-update="#result">
+    <div class="form-group">
+        <label>Country</label>
+        <select class="form-control" asp-for="Country" asp-items="countries"></select>
+    </div>
+    <div class="form-group">
+        <label>Locality</label>
+        <select class="form-control" asp-for="Locality" asp-items="localities"></select>
+    </div>
+
+    <input type="submit" value="Show data" class="btn btn-primary btn-lg" />
+</form>
+
+<script>
+    var countries =  @Html.Raw(Json.Serialize(Model.Countries));
+</script>
+<div id="result"></div>

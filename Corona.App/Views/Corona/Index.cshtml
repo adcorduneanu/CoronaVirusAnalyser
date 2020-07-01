@@ -1,0 +1,12 @@
+﻿@model LocalityViewModel
+@{
+    ViewData["Title"] = $"{Model.CountryName} - {Model.LocalityName}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@{ 
+    await Html.RenderPartialAsync("_Chart", Model);
+}
+
