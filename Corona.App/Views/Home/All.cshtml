@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Corona.App.Models.LocalityViewModel>
+@using System.Linq;
+
+@{
+    ViewData["Title"] = "All";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    foreach (var data in Model)
+    {
+        var uniqueId = $"id-{Guid.NewGuid()}";
+        <canvas id="chart-@uniqueId"></canvas>
+        <script async>
+            jQuery(() => {
+            const chartNode = document.getElementById('chart-@uniqueId').getContext('2d');
+            const chart = new Chart(chartNode, {
+                    type: 'line',
+                    data: {
+            labels: [...@Html.Raw(Json.Serialize(@data.DateValues.Select(x => x.DateTime.ToShortDateString()).ToArray()))],
+                        datasets: [
+                            {
+                label: '@data.LocalityName',
+                                backgroundColor: getRandomRgb(),
+                                borderColor: getRandomRgb(),
+                                data: [...@Html.Raw(Json.Serialize(@data.DateValues.Select(x => x.Difference).ToArray()))]
+                            }
+                        ]
+                    },
+                    options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                                }
+                    }]
+                        }
+            }
+        });
+            });
+        </script>
+    }
+}

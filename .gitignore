@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Corona.App/bin/Debug/netcoreapp3.0
+/Corona.App/obj
+/Corona.Crawler/bin/Debug/netcoreapp3.0
+/Corona.Crawler/obj
+/Corona.Domain.Contract/bin/Debug/netstandard2.0
+/Corona.Domain.Contract/obj
+/Corona.Infrastructure/bin/Debug/netcoreapp3.0
+/Corona.Infrastructure/obj

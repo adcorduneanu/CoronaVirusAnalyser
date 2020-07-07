@@ -1,4 +1,4 @@
-﻿namespace Corona.App.Models
+﻿namespace Corona.Domain.ValueObjects
 {
     using System;
 
