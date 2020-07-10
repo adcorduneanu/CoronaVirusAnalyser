@@ -10,3 +10,8 @@
 /Corona.Domain.Contract/obj
 /Corona.Infrastructure/bin/Debug/netcoreapp3.0
 /Corona.Infrastructure/obj
+/Corona.App/bin
+/Corona.Crawler/bin
+/Corona.Domain.Contract/bin/Release/netstandard2.0
+/Corona.Infrastructure/bin
+*.user

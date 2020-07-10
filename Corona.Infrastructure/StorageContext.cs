@@ -2,12 +2,10 @@
 {
     using Microsoft.EntityFrameworkCore;
 
-    public class StorageContext : DbContext
+    public sealed class StorageContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseMySQL("");
-        }
+        public StorageContext(DbContextOptions<StorageContext> options) : base(options)
+        { }
 
         public DbSet<Country> Countries { get; set; }
         public DbSet<Locality> Localities { get; set; }

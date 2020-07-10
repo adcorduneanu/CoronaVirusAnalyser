@@ -14,17 +14,22 @@
 
     internal class StiriOficiale : IProcessor
     {
+        private readonly StorageContext storageContext;
+
         public string Country => "Romania";
+
+        public StiriOficiale(StorageContext storageContext)
+        {
+            this.storageContext = storageContext;
+        }
 
         public async Task ProcessAsync(string url)
         {
             var sickDateTime = this.ParseForDate(url);
 
-            using var storageContext = new StorageContext();
+            this.storageContext.Database.EnsureCreated();
 
-            storageContext.Database.EnsureCreated();
-
-            var existingData = storageContext.Sicks
+            var existingData = this.storageContext.Sicks
                 .Any(x => x.Date == sickDateTime && x.Locality.Country.Name == Country);
 
             if (existingData)
@@ -32,23 +37,25 @@
                 return;
             }
 
-            Country country = await ProcessCountryData(storageContext);
+            Country country = await ProcessCountryData();
 
             var records = await GetSourceRecords(url);
 
             records.ToList()
                 .ForEach(localRecord =>
                 {
-                    ProcessLocalData(url, localRecord, sickDateTime, storageContext, country);
+                    ProcessLocalData(url, localRecord, sickDateTime, country);
                 });
 
 
-            await storageContext.SaveChangesAsync();
+            await this.storageContext.SaveChangesAsync();
         }
 
-        private async Task<Country> ProcessCountryData(StorageContext storageContext)
+        private async Task<Country> ProcessCountryData()
         {
-            var country = storageContext.Countries.FirstOrDefault(x => x.Name == this.Country);
+            var country = this.storageContext.Countries
+                .FirstOrDefault(x => x.Name == this.Country);
+
             if (country is null)
             {
                 country = new Country
@@ -57,15 +64,16 @@
                     Localities = new List<Locality>()
                 };
 
-                await storageContext.Countries.AddAsync(country);
+                await this.storageContext.Countries
+                    .AddAsync(country);
             }
 
             return country;
         }
 
-        private static void ProcessLocalData(string url, (string locality, int records) localRecord, DateTime sickDateTime, StorageContext storageContext, Country country)
+        private void ProcessLocalData(string url, (string locality, int records) localRecord, DateTime sickDateTime, Country country)
         {
-            var locality = storageContext.Localities
+            var locality = this.storageContext.Localities
                 .FirstOrDefault(y => y.Name == localRecord.locality && y.Country.Id == country.Id);
 
             if (locality is null)
@@ -77,7 +85,8 @@
                     Sicks = new List<Sick>()
                 };
 
-                storageContext.Localities.Add(locality);
+                this.storageContext.Localities
+                    .Add(locality);
             }
 
             var sick = new Sick
@@ -88,7 +97,8 @@
                 Records = localRecord.records
             };
 
-            storageContext.Sicks.Add(sick);
+            this.storageContext.Sicks
+                .Add(sick);
         }
 
         private async Task<IEnumerable<(string locality, int records)>> GetSourceRecords(string url)

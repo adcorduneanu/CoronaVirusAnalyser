@@ -6,7 +6,7 @@
     using System.Net.Http;
     using System.Threading.Tasks;
 
-    internal class Worldmeter
+    public sealed class Worldmeter
     {
         public const string Url = "https://www.worldometers.info/coronavirus/country";
 

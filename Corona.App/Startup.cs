@@ -2,8 +2,10 @@ namespace Corona.App
 {
     using Corona.App.Services;
     using Corona.Domain.Providers;
+    using Corona.Infrastructure;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -22,7 +24,11 @@ namespace Corona.App
         {
             services.AddControllersWithViews();
 
-            services.AddScoped<ICoronaDataProvider, CoronaDataProvider>();
+            services.AddScoped<ICoronaDataProvider, CoronaDataProvider>(); 
+            
+            services.AddDbContext<StorageContext>(options => 
+                options.UseMySQL(Configuration.GetConnectionString("corona"))
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -12,11 +12,15 @@
 
     public sealed class CoronaDataProvider : ICoronaDataProvider
     {
+        private readonly StorageContext storageContext;
+
+        public CoronaDataProvider(StorageContext storageContext)
+        {
+            this.storageContext = storageContext;
+        }
         public async Task<IList<Country>> GetCountries()
         {
-            using var storageContext = new StorageContext();
-
-            var countries = await storageContext.Countries
+            var countries = await this.storageContext.Countries
                 .Include(x => x.Localities)
                 .Select(x => new Country
                 {
@@ -34,23 +38,19 @@
 
         public async Task<IEnumerable<Locality>> GetLocalitiesData()
         {
-            using var storageContext = new StorageContext();
-
-            var locations = await storageContext.Localities
+            var locations = await this.storageContext.Localities
                 .Include(x => x.Country)
                 .Include(x => x.Sicks)
-                .OrderBy(x => x.Name)
                 .ToListAsync();
 
             return locations.Select(GetLocality)
+                .OrderByDescending(x=>x.DateValues.Sum(y=>y.Difference))
                 .ToList();
         }
 
         public async Task<Locality> GetLocalityData(string country, string locality)
         {
-            using var storageContext = new StorageContext();
-
-            var location = await storageContext.Localities
+            var location = await this.storageContext.Localities
                 .Include(x => x.Country)
                 .Include(x => x.Sicks)
                 .FirstOrDefaultAsync(x => x.Name.ToLower() == locality.ToLower()
