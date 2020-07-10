@@ -12,7 +12,7 @@
     using HtmlAgilityPack;
     using HtmlAgilityPack.CssSelectors.NetCore;
 
-    internal class StiriOficiale : IProcessor
+    public class StiriOficiale : IProcessor
     {
         private readonly StorageContext storageContext;
 

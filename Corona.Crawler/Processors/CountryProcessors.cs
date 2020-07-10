@@ -3,23 +3,23 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
+    using Microsoft.Extensions.DependencyInjection;
 
-    class CountryProcessors
+    public class CountryProcessors : ICountryProcessors
     {
-        public static IEnumerable<IProcessor> GetProcessors(string country) => Processors.Value[country];
+        public CountryProcessors(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
 
-        private static readonly Lazy<ILookup<string, IProcessor>> Processors
-            = new Lazy<ILookup<string, IProcessor>>(
-                () =>
-                {
-                    var processorType = typeof(IProcessor);
-                    var processors = AppDomain.CurrentDomain.GetAssemblies()
-                        .SelectMany(x => x.GetTypes())
-                        .Where(x => processorType.IsAssignableFrom(x) && x.IsClass && !x.IsAbstract)
-                        .Select(x => (IProcessor)Activator.CreateInstance(x));
+        public IEnumerable<IProcessor> GetProcessors(string country) => this.Processors.Value[country];
 
-                    return processors.ToLookup(x => x.Country);
-                }
+        private readonly Lazy<ILookup<string, IProcessor>> Processors =
+            new Lazy<ILookup<string, IProcessor>>(() =>
+                _serviceProvider.GetServices<IProcessor>()
+                    .ToLookup(x => x.Country)
             );
+
+        private static IServiceProvider _serviceProvider;
     }
 }

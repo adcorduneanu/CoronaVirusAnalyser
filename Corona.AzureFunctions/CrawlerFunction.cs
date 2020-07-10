@@ -6,12 +6,19 @@ namespace Corona.AzureFunctions
     using Microsoft.Azure.WebJobs;
     using Microsoft.Extensions.Logging;
 
-    public static class CrawlerFunction
+    public class CrawlerFunction
     {
-        [FunctionName(nameof(CrawlerFunction))]
-        public static async Task RunAsync([TimerTrigger("0 0 23 * * *")] TimerInfo myTimer, ILogger log)
+        private readonly IWorldmeter worldmeter;
+
+        public CrawlerFunction(IWorldmeter worldmeter)
         {
-            await new Worldmeter("Romania").ProcessAsync();
+            this.worldmeter = worldmeter;
+        }
+
+        [FunctionName(nameof(CrawlerFunction))]
+        public async Task RunAsync([TimerTrigger("0 0 23 * * *")] TimerInfo myTimer, ILogger log)
+        {
+            await this.worldmeter.ExecuteFor("Romania").ProcessAsync();
 
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         }

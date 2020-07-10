@@ -2,7 +2,7 @@
 {
     using System.Threading.Tasks;
 
-    internal interface IProcessor
+    public interface IProcessor
     {
         public string Country { get; }
         Task ProcessAsync(string url);
