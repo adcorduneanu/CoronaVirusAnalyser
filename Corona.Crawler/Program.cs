@@ -34,7 +34,7 @@
                 .AddDbContext<StorageContext>(options =>
                     options.UseMySQL(configuration["ConnectionStrings:corona"])
                  )
-                .AddScoped<StorageContext>()
+                .AddSingleton<StorageContext>()
                 .AddSingleton<IWorldmeter, Worldmeter>()
                 .AddSingleton<ICountryProcessors, CountryProcessors>()
                ;

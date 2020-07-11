@@ -8,7 +8,7 @@ namespace Corona.AzureFunctions
     using Corona.Crawler;
     using Corona.Domain.Extensions;
     using Corona.Infrastructure;
-    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;    
     using Microsoft.Extensions.DependencyInjection;
 
     public class Startup : FunctionsStartup
@@ -17,9 +17,11 @@ namespace Corona.AzureFunctions
         {
             builder.Services
                 .AddDbContext<StorageContext>(options =>
-                   options.UseMySQL(Environment.GetEnvironmentVariable("ConnectionStrings:corona"))
+                   options.UseMySql(
+                       Environment.GetEnvironmentVariable("ConnectionStrings:corona")
+                    )
                 )
-                .AddScoped<StorageContext>()
+                .AddSingleton<StorageContext>()
                 .AddSingleton<IWorldmeter, Worldmeter>()
                 .AddSingleton<ICountryProcessors, CountryProcessors>();
 

@@ -18,6 +18,7 @@ namespace Corona.AzureFunctions
         [FunctionName(nameof(CrawlerFunction))]
         public async Task RunAsync([TimerTrigger("0 0 23 * * *")] TimerInfo myTimer, ILogger log)
         {
+            log.LogInformation($"connection: {Environment.GetEnvironmentVariable("ConnectionStrings:corona")}");
             await this.worldmeter.ExecuteFor("Romania").ProcessAsync();
 
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
